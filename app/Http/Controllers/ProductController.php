@@ -12,42 +12,42 @@ class ProductController extends Controller
     public function index()
     {
         // Global Scope
-        // $products = Product::withoutGlobalScope(ActiveScope::class)->get();
+        $products = Product::withoutGlobalScope(ActiveScope::class)->get();
         // // Local Scope
-        // $products = Product::Inactive()->get();
-        // $products = Product::HasDiscount()->get();
-        // $products = Product::HasNoDiscount()->get();
-        // $products = Product::InStock()->get();
-        // $products = Product::OutOfStock()->get();
-        // $products = Product::Expired()->get();
-        // $products = Product::NotExpired()->get();
-        // $stars = 4;
-        // $products = Product::WithRatings($stars)->get();
-        // return $products;
+        $products = Product::Inactive()->get();
+        $products = Product::HasDiscount()->get();
+        $products = Product::HasNoDiscount()->get();
+        $products = Product::InStock()->get();
+        $products = Product::OutOfStock()->get();
+        $products = Product::Expired()->get();
+        $products = Product::NotExpired()->get();
+        $stars = 4;
+        $products = Product::WithRatings($stars)->get();
+        return $products;
 
 
 
         // subquery
         // average rating subquery 
         // average rating > 4 
-        // $products = Product::whereIn('id', function ($query) {
-        //     $query->select('product_id')
-        //         ->from('reviews')
-        //         ->groubBy('product_id')
-        //         ->havingRaw('AVG(rating) > ?', [4]);
-        // })
-        //     // wo products ho jinki qty > 10
-        //     ->whereIn('id', function ($query) {
-        //         $query->select('product_id')
-        //             ->from('inventories')
-        //             ->where('quantity', '>', 10);
-        //     })
-        //     // wo products ho jinki reviews last month se bni hui hain
-        //     ->whereIn('id', function ($query) {
-        //         $query->select('product_id')
-        //             ->from('reviews as reviews2')
-        //             ->where('created_at', '>', now()->subMonth());
-        //     })->get();
+        $products = Product::whereIn('id', function ($query) {
+            $query->select('product_id')
+                ->from('reviews')
+                ->groubBy('product_id')
+                ->havingRaw('AVG(rating) > ?', [4]);
+        })
+            // wo products ho jinki qty > 10
+            ->whereIn('id', function ($query) {
+                $query->select('product_id')
+                    ->from('inventories')
+                    ->where('quantity', '>', 10);
+            })
+            // wo products ho jinki reviews last month se bni hui hain
+            ->whereIn('id', function ($query) {
+                $query->select('product_id')
+                    ->from('reviews as reviews2')
+                    ->where('created_at', '>', now()->subMonth());
+            })->get();
 
         // average rating > 4 but avg_rating name add
         $products = Product::select('products.*')
