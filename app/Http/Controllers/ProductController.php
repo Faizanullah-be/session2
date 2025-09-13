@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Product;
 use App\Scopes\ActiveScope;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class ProductController extends Controller
 {
@@ -31,7 +32,7 @@ class ProductController extends Controller
         // only those products should come whose average rating is greater then 4   
         $requestedProducts = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
 
-        $products = Product::whereIn('id', $requestedProducts)
+        $products = DB::table('products')->whereIn('id', $requestedProducts)
             // only those products should come whose average rating is greater then 4F
             ->whereIn('id', function ($query) {
                 $query->select('product_id')
