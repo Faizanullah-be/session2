@@ -58,7 +58,11 @@ class ProductController extends Controller
             })->get();
 
         // dump($products->toArray());
-        return $products;
+        return response()->json([
+            'status' => true,
+            'message' => 'Products fetched successfully',
+            'products' => $products
+        ]);
     }
 
     /**
