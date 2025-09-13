@@ -27,38 +27,37 @@ class ProductController extends Controller
 
 
 
-        // subquery
-        // average rating Query+subquery 
-        $products = Product::whereIn('id', function ($query) {
-            $query->select('product_id')
-                ->from('reviews')
-                ->groupBy('product_id')
-                ->havingRaw("AVG(rating) > ?", [4]);
-        })
-            // only those products should come whose qty greater then (number) Query+subquery 
+        // Eloquent  (QueryBuilder + subquery)
+        // only those products should come whose average rating is greater then 4   
+        $requestedProducts = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+
+        $products = Product::whereIn('id', $requestedProducts)
+            // only those products should come whose average rating is greater then 4F
+            ->whereIn('id', function ($query) {
+                $query->select('product_id')
+                    ->from('reviews')
+                    ->groupBy('product_id')
+                    ->havingRaw("AVG(rating) > ?", [4]);
+            })
+            // only those products should come whose qty greater then 10
+            ->whereIn('id', $requestedProducts)
             ->whereIn('id', function ($query) {
                 $query->select('product_id')
                     ->from('inventories')
+                    ->groupBy('product_id')
                     ->where('quantity', '>', 10);
             })
             // only those products should come whose reviews are created in last 30 days
+            ->whereIn('id', $requestedProducts)
             ->whereIn('id', function ($query) {
                 $query->select('product_id')
-                    ->from('reviews as reviews2')
-                    ->where('created_at', '>', now()->subMonth());
+                    ->from('reviews as review2')
+                    ->groupBy('product_id')
+                    ->where('created_at', '>=', now()->subMonth());
             })->get();
 
-
-        $productsSubQuery = Product::select('products.*')
-            ->selectSub(function ($query) {
-                $query->from('reviews')
-                    ->selectRaw('AVG(rating)')
-                    ->whereColumn('product_id', 'products.id');
-            }, 'avg_rating')
-            ->having('avg_rating', '>', 4)
-            ->get();
-        // return $products;
-        // dump($productsSubQuery->toArray());
+        // dump($products->toArray());
+        return $products;
     }
 
     /**
